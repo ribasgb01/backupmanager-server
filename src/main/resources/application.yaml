@@ -1,6 +1,12 @@
 spring:
   application:
-    name: backupmanager
+    name: backupmanager-server
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/backup_manager
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -12,7 +18,7 @@ spring:
 storage:
   s3:
     endpoint: http://localhost:9000
-    bucket-name: erp-backups-market
+    bucket-name: erp-backups-bucket
     region: us-east-1
     access-key: minioadmin
     secret-key: minioadmin
