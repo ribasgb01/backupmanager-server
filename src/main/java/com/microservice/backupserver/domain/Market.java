@@ -13,10 +13,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class Market {
-    UUID id;
-    String name;
-    String cnpj;
-    String apiKey;
-    LocalTime expectedBackupTime;
-    Boolean active;
+    private UUID id;
+    private String name;
+    private String cnpj;
+    private String apiKey;
+    private LocalTime expectedBackupTime;
+    private Boolean active;
 }

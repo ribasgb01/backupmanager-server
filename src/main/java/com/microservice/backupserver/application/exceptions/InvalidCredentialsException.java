@@ -1,7 +1,7 @@
 package com.microservice.backupserver.application.exceptions;
 
-public class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException(String message) {
+public class InvalidCredentialsException extends RuntimeException {
+    public InvalidCredentialsException(String message) {
         super(message);
     }
 }

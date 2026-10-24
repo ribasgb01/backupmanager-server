@@ -1,7 +1,7 @@
 package com.microservice.backupserver.application.exceptions;
 
-public class RefreshTokenGenerationException extends RuntimeException {
-    public RefreshTokenGenerationException(String message) {
+public class RefreshTokenSaveException extends RuntimeException {
+    public RefreshTokenSaveException(String message) {
         super(message);
     }
 }

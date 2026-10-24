@@ -14,13 +14,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class BackupHistory {
-    UUID id;
-    UUID marketId;
-    LocalDateTime createdAt;
-    LocalDateTime completedAt;
-    Long fileSizeBytes;
-    String fileHashMd5;
-    String s3Key;
-    BackupStatus status;
-    String errorMessage;
+    private UUID id;
+    private UUID marketId;
+    private LocalDateTime createdAt;
+    private LocalDateTime completedAt;
+    private Long fileSizeBytes;
+    private String fileHashMd5;
+    private String s3Key;
+    private BackupStatus status;
+    private String errorMessage;
 }
