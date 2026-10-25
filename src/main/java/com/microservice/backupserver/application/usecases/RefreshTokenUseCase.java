@@ -42,6 +42,10 @@ public class RefreshTokenUseCase {
         User user = userGateway.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não foi encontrado."));
 
+        if(!user.getActive()){
+            throw new InactiveUserException("Usuário não está ativo.");
+        }
+
         String newAccessToken = tokenProviderGateway.generateAccessToken(user, sessionId);
         String newRefreshToken = tokenProviderGateway.generateRefreshToken(user, sessionId);
 

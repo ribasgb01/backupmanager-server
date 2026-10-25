@@ -22,3 +22,10 @@ storage:
     region: us-east-1
     access-key: minioadmin
     secret-key: minioadmin
+
+api:
+  security:
+    token:
+      access-expiration: 7200000
+      refresh-expiration: 604800000
+      secret: ${JWT_SECRET:3JdrC5d9HauTsAb33spoS6EzSuGCtNS274rQ7V4B5pQ=}
