@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.yaml.snakeyaml.error.Mark;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -37,9 +38,9 @@ public class BackupController {
     }
 
     @PostMapping("/{id}/complete")
-    public ResponseEntity<Void> completeBackup(@PathVariable UUID id, @RequestBody @Valid CompleteBackupRequest backupRequest){
+    public ResponseEntity<Void> completeBackup(@AuthenticationPrincipal Market market, @PathVariable UUID id, @RequestBody @Valid CompleteBackupRequest backupRequest){
 
-        backupHistoryUseCase.completeBackup(id, backupRequest.status(), backupRequest.errorMessage(), backupRequest.fileHashMd5());
+        backupHistoryUseCase.completeBackup(market, id, backupRequest.status(), backupRequest.errorMessage(), backupRequest.fileHashMd5());
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

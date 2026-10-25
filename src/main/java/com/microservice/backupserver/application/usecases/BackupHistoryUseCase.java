@@ -68,10 +68,15 @@ public class BackupHistoryUseCase {
         return new BackupUploadResponse(savedBackupHistory.getId(), presignedUrl);
     }
 
-    public void completeBackup(UUID backupId, BackupStatus status, String errorMessage, String fileHashMd5){
+    public void completeBackup(Market market, UUID backupId, BackupStatus status, String errorMessage, String fileHashMd5){
 
         BackupHistory backupHistory = backupHistoryGateway.findById(backupId)
                 .orElseThrow(() -> new EntityNotFoundException("Este backup não foi encontrado."));
+
+
+        if(!backupHistory.getMarketId().equals(market.getId())){
+            throw new BusinessRuleException("O backup informado não pertence a este mercado.");
+        }
 
         if(backupHistory.getStatus() != BackupStatus.PENDING){
             throw new BusinessRuleException("Este backup não está constando como pendente.");
