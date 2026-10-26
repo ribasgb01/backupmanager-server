@@ -10,5 +10,4 @@ public interface TokenStateGateway {
     boolean isSessionRevoked(UUID sessionId);
     void revokeSession(UUID sessionId, Instant expiresAt);
     void removeRefreshToken(String refreshToken);
-    boolean rotateRefreshToken(String currentRefreshToken, String newRefreshToken, Instant expiresAt);
 }

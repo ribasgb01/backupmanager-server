@@ -1,9 +1,6 @@
 package com.microservice.backupserver.application.usecases;
 
-import com.microservice.backupserver.application.exceptions.BusinessRuleException;
-import com.microservice.backupserver.application.exceptions.InactiveUserException;
-import com.microservice.backupserver.application.exceptions.InvalidCredentialsException;
-import com.microservice.backupserver.application.exceptions.InvalidTokenException;
+import com.microservice.backupserver.application.exceptions.*;
 import com.microservice.backupserver.application.gateways.PasswordHasherGateway;
 import com.microservice.backupserver.application.gateways.TokenStateGateway;
 import com.microservice.backupserver.application.gateways.TokenProviderGateway;
@@ -44,10 +41,11 @@ public class AuthUseCase {
         String refreshToken = tokenProviderGateway.generateRefreshToken(user, sessionId);
 
         Instant refreshTokenExpiration = tokenProviderGateway.getExpiration(refreshToken);
+        Instant accessTokenExpiration = tokenProviderGateway.getExpiration(accessToken);
 
         tokenStateGateway.saveRefreshToken(refreshToken, refreshTokenExpiration);
 
-        return new AuthenticationResponse(accessToken, refreshToken);
+        return new AuthenticationResponse(accessToken, accessTokenExpiration, refreshToken, refreshTokenExpiration);
     }
 
     public void logout(String refreshToken){
@@ -66,5 +64,42 @@ public class AuthUseCase {
 
         tokenStateGateway.revokeSession(sessionId, refreshTokenExpiration);
         tokenStateGateway.removeRefreshToken(refreshToken);
+    }
+
+    public AuthenticationResponse rotateRefreshToken(String refreshToken){
+
+        if(!tokenProviderGateway.validateRefreshToken(refreshToken)){
+            throw new InvalidTokenException("Token inválido.");
+        }
+
+        if(!tokenStateGateway.isRefreshTokenValid(refreshToken)){
+            throw new InvalidTokenException("Token inválido.");
+        }
+
+        UUID sessionId = tokenProviderGateway.extractSessionId(refreshToken);
+
+        if(tokenStateGateway.isSessionRevoked(sessionId)){
+            throw new SessionRevokedException("Sessão inválida.");
+        }
+
+        UUID userId = tokenProviderGateway.extractUserId(refreshToken);
+
+        User user = userGateway.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não foi encontrado."));
+
+        if(!user.getActive()){
+            throw new InactiveUserException("Usuário não está ativo.");
+        }
+
+        String newAccessToken = tokenProviderGateway.generateAccessToken(user, sessionId);
+        String newRefreshToken = tokenProviderGateway.generateRefreshToken(user, sessionId);
+
+        Instant newRefreshTokenExpiration = tokenProviderGateway.getExpiration(newRefreshToken);
+        Instant newAccessTokenExpiration = tokenProviderGateway.getExpiration(newAccessToken);
+
+        tokenStateGateway.saveRefreshToken(newRefreshToken, newRefreshTokenExpiration);
+        tokenStateGateway.removeRefreshToken(refreshToken);
+
+        return new AuthenticationResponse(newAccessToken, newAccessTokenExpiration, newRefreshToken, newRefreshTokenExpiration);
     }
 }

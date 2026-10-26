@@ -1,6 +1,10 @@
 package com.microservice.backupserver.application.usecases.dto;
 
+import java.time.Instant;
+
 public record AuthenticationResponse(
         String accessToken,
-        String refreshToken
+        Instant accessExpiration,
+        String refreshToken,
+        Instant refreshExpiration
 ) {}
