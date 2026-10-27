@@ -41,6 +41,7 @@ public class TokenProviderAdapter implements TokenProviderGateway {
                 .expiration(expiryDate)
                 .claim("sid", sessionId.toString())
                 .claim("type", "access")
+                .claim("role", user.getRole().name())
                 .signWith(key)
                 .compact();
     }
@@ -104,6 +105,52 @@ public class TokenProviderAdapter implements TokenProviderGateway {
 
         return true;
     }
+
+    @Override
+    public boolean validateAccessToken(String token) {
+
+        try {
+            SecretKey key = getSigningKey();
+
+            Claims payload = Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+            String type = payload.get("type", String.class);
+
+            if(!type.equals("access")){
+                return false;
+            }
+
+        } catch (Exception e){
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public String extractRole(String token) {
+
+        try {
+            SecretKey key = getSigningKey();
+
+            String role = Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .get("role", String.class);
+
+            return role;
+
+        } catch (JwtException | IllegalArgumentException e){
+            throw new InvalidTokenException("Token inválido.");
+        }
+    }
+
 
     @Override
     public UUID extractUserId(String token) {

@@ -11,6 +11,8 @@ public interface TokenProviderGateway {
     String generateRefreshToken(User user, UUID sessionId);
     Instant getExpiration(String token);
     boolean validateRefreshToken(String token);
+    boolean validateAccessToken(String token);
+    String extractRole(String token);
     UUID extractUserId(String token);
     UUID extractSessionId(String token);
 }

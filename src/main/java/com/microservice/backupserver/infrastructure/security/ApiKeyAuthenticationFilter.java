@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -46,7 +47,9 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
         var apiKeyAuthenticationToken = new ApiKeyAuthenticationToken(market, authorities);
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            SecurityContextHolder.getContext().setAuthentication(apiKeyAuthenticationToken);
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(apiKeyAuthenticationToken);
+            SecurityContextHolder.setContext(context);
         }
 
         filterChain.doFilter(request, response);
