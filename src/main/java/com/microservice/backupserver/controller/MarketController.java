@@ -60,9 +60,9 @@ public class MarketController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MarketResponse> findMarketById(@PathVariable UUID marketId){
+    public ResponseEntity<MarketResponse> findMarketById(@PathVariable UUID id){
 
-        var market = marketUseCase.getMarketById(marketId);
+        var market = marketUseCase.getMarketById(id);
 
         var response = new MarketResponse(
                 market.getId(),
