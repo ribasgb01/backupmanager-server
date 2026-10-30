@@ -3,9 +3,9 @@ spring:
     name: backupmanager-server
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/backup_manager
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -17,15 +17,15 @@ spring:
 
 storage:
   s3:
-    endpoint: http://localhost:9000
-    bucket-name: erp-backups-bucket
-    region: us-east-1
-    access-key: minioadmin
-    secret-key: minioadmin
+    endpoint: ${STORAGE_S3_ENDPOINT}
+    bucket-name: ${STORAGE_S3_BUCKET_NAME}
+    region: ${STORAGE_S3_REGION}
+    access-key: ${STORAGE_S3_ACCESS_KEY}
+    secret-key: ${STORAGE_S3_SECRET_KEY}
 
 api:
   security:
     token:
-      access-expiration: 7200000
-      refresh-expiration: 604800000
-      secret: ${JWT_SECRET:3JdrC5d9HauTsAb33spoS6EzSuGCtNS274rQ7V4B5pQ=}
+      access-expiration: ${API_SECURITY_TOKEN_ACCESS_EXPIRATION:900000}
+      refresh-expiration: ${API_SECURITY_TOKEN_REFRESH_EXPIRATION:604800000}
+      secret: ${JWT_SECRET}
