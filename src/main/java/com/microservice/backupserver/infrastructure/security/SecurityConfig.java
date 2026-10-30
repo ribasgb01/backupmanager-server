@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/users").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/backups/request-upload", "/api/v1/backups/*/complete").hasRole("AGENT")
                         .requestMatchers("/api/v1/backups/*/download-url", "/api/v1/backups/market/*","/api/v1/markets/**").hasAnyRole("SUPPORT", "ADMIN"))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
