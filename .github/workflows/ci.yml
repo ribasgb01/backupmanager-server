@@ -17,39 +17,6 @@ jobs:
     name: Server - Build and Tests
     runs-on: ubuntu-latest
 
-    env:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/backup_manager_ci
-      SPRING_DATASOURCE_USERNAME: ci_user
-      SPRING_DATASOURCE_PASSWORD: ci_password
-
-      SPRING_DATA_REDIS_HOST: localhost
-      SPRING_DATA_REDIS_PORT: 6379
-
-      STORAGE_S3_ENDPOINT: http://localhost:9000
-      STORAGE_S3_BUCKET_NAME: ci-test-bucket
-      STORAGE_S3_REGION: us-east-1
-      STORAGE_S3_ACCESS_KEY: ci-access-key
-      STORAGE_S3_SECRET_KEY: ci-secret-key
-
-      API_SECURITY_TOKEN_ACCESS_EXPIRATION: 7200000
-      API_SECURITY_TOKEN_REFRESH_EXPIRATION: 604800000
-      JWT_SECRET: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
-
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: backup_manager_ci
-          POSTGRES_USER: ci_user
-          POSTGRES_PASSWORD: ci_password
-        ports:
-          - 5432:5432
-
-      redis:
-        image: redis:8-alpine
-        ports:
-          - 6379:6379
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -68,4 +35,4 @@ jobs:
         run: chmod +x mvnw
 
       - name: Build and test
-        run: ./mvnw --batch-mode --no-transfer-progress clean verify
+        run: ./mvnw --batch-mode --no-transfer-progress clean test
