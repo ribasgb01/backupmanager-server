@@ -5,8 +5,8 @@ import com.microservice.backupserver.application.exceptions.EntityNotFoundExcept
 import com.microservice.backupserver.application.gateways.BackupHistoryGateway;
 import com.microservice.backupserver.application.gateways.FileStorageGateway;
 import com.microservice.backupserver.application.gateways.MarketGateway;
-import com.microservice.backupserver.application.usecases.dto.BackupUploadResponse;
-import com.microservice.backupserver.application.usecases.dto.GetBackupResponse;
+import com.microservice.backupserver.application.usecases.dto.BackupUploadDTO;
+import com.microservice.backupserver.application.usecases.dto.GetBackupDTO;
 import com.microservice.backupserver.domain.BackupHistory;
 import com.microservice.backupserver.domain.Market;
 import com.microservice.backupserver.domain.enums.BackupStatus;
@@ -34,7 +34,7 @@ public class BackupHistoryUseCase {
     private static final Duration UPLOAD_URL_EXPIRATION = Duration.ofMinutes(30);
     private static final Duration DOWNLOAD_URL_EXPIRATION = Duration.ofMinutes(15);
 
-    public BackupUploadResponse requestBackupUpload(Market market, String fileName, Long fileSizeBytes){
+    public BackupUploadDTO requestBackupUpload(Market market, String fileName, Long fileSizeBytes){
 
         LocalDateTime currentDate = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
@@ -65,7 +65,7 @@ public class BackupHistoryUseCase {
 
         BackupHistory savedBackupHistory = backupHistoryGateway.save(backupHistory);
 
-        return new BackupUploadResponse(savedBackupHistory.getId(), presignedUrl);
+        return new BackupUploadDTO(savedBackupHistory.getId(), presignedUrl);
     }
 
     public void completeBackup(Market market, UUID backupId, BackupStatus status, String errorMessage, String fileHashMd5){
@@ -108,7 +108,7 @@ public class BackupHistoryUseCase {
         return fileStorageGateway.generateDownloadPresignedUrl(backupHistory.getS3Key(), DOWNLOAD_URL_EXPIRATION);
     }
 
-    public GetBackupResponse getBackupHistory(UUID marketId, LocalDate startDate, LocalDate endDate, Pageable pageable){
+    public GetBackupDTO getBackupHistory(UUID marketId, LocalDate startDate, LocalDate endDate, Pageable pageable){
 
         Market market = marketGateway.findById(marketId)
                 .orElseThrow(() -> new EntityNotFoundException("Mercado não encontrado."));
@@ -130,7 +130,7 @@ public class BackupHistoryUseCase {
 
         Page<BackupHistory> backupHistoryPage = backupHistoryGateway.findByPeriod(marketId, startDateTime, endDateTime, pageable);
 
-        return new GetBackupResponse(backupHistoryPage, market.getName());
+        return new GetBackupDTO(backupHistoryPage, market.getName());
     }
 
     public void checkMissedBackups(){

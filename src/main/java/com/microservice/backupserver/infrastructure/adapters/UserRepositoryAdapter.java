@@ -7,6 +7,7 @@ import com.microservice.backupserver.infrastructure.persistence.mappers.UserMapp
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,4 +44,17 @@ public class UserRepositoryAdapter implements UserGateway {
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
+
+    @Override
+    public int deleteByIdReturningCount(UUID id) {
+        return userRepository.deleteByIdReturningCount(id);
+    }
+
+    @Override
+    public List<User> getActiveUsers() {
+        return userRepository.findByActiveTrue()
+                .stream().map(userMapper::toDomain).toList();
+    }
+
+
 }

@@ -2,7 +2,7 @@ package com.microservice.backupserver.application.usecases.dto;
 
 import java.time.Instant;
 
-public record AuthenticationResponse(
+public record AuthenticationDTO(
         String accessToken,
         Instant accessExpiration,
         String refreshToken,

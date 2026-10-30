@@ -5,7 +5,8 @@ import com.microservice.backupserver.application.gateways.PasswordHasherGateway;
 import com.microservice.backupserver.application.gateways.TokenStateGateway;
 import com.microservice.backupserver.application.gateways.TokenProviderGateway;
 import com.microservice.backupserver.application.gateways.UserGateway;
-import com.microservice.backupserver.application.usecases.dto.AuthenticationResponse;
+import com.microservice.backupserver.application.usecases.dto.AuthenticationDTO;
+import com.microservice.backupserver.application.usecases.dto.UserDTO;
 import com.microservice.backupserver.domain.User;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +21,7 @@ public class AuthUseCase {
     private final TokenProviderGateway tokenProviderGateway;
     private final TokenStateGateway tokenStateGateway;
 
-    public AuthenticationResponse authenticate(String username, String rawPassword){
+    public AuthenticationDTO authenticate(String username, String rawPassword){
 
         User user = userGateway.findByUsername(username)
                 .orElseThrow(() -> new InvalidCredentialsException("Usuário ou senha incorretos."));
@@ -45,7 +46,7 @@ public class AuthUseCase {
 
         tokenStateGateway.saveRefreshToken(refreshToken, refreshTokenExpiration);
 
-        return new AuthenticationResponse(accessToken, accessTokenExpiration, refreshToken, refreshTokenExpiration);
+        return new AuthenticationDTO(accessToken, accessTokenExpiration, refreshToken, refreshTokenExpiration);
     }
 
     public void logout(String refreshToken){
@@ -66,7 +67,7 @@ public class AuthUseCase {
         tokenStateGateway.removeRefreshToken(refreshToken);
     }
 
-    public AuthenticationResponse rotateRefreshToken(String refreshToken){
+    public AuthenticationDTO rotateRefreshToken(String refreshToken){
 
         if(!tokenProviderGateway.validateRefreshToken(refreshToken)){
             throw new InvalidTokenException("Token inválido.");
@@ -100,6 +101,15 @@ public class AuthUseCase {
         tokenStateGateway.saveRefreshToken(newRefreshToken, newRefreshTokenExpiration);
         tokenStateGateway.removeRefreshToken(refreshToken);
 
-        return new AuthenticationResponse(newAccessToken, newAccessTokenExpiration, newRefreshToken, newRefreshTokenExpiration);
+        return new AuthenticationDTO(newAccessToken, newAccessTokenExpiration, newRefreshToken, newRefreshTokenExpiration);
+    }
+
+    public UserDTO getCurrentUser(String accessToken){
+
+        if(!tokenProviderGateway.validateAccessToken(accessToken)){
+            throw new InvalidTokenException("Token inválido.");
+        }
+
+        return tokenProviderGateway.extractUserClains(accessToken);
     }
 }

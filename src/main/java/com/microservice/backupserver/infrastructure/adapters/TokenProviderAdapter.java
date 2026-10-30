@@ -2,9 +2,11 @@ package com.microservice.backupserver.infrastructure.adapters;
 
 import com.microservice.backupserver.application.exceptions.InvalidTokenException;
 import com.microservice.backupserver.application.gateways.TokenProviderGateway;
+import com.microservice.backupserver.application.usecases.dto.UserDTO;
 import com.microservice.backupserver.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.UUID;
 
@@ -42,6 +45,8 @@ public class TokenProviderAdapter implements TokenProviderGateway {
                 .claim("sid", sessionId.toString())
                 .claim("type", "access")
                 .claim("role", user.getRole().name())
+                .claim("username", user.getUsername())
+                .claim("timestamp", user.getCreatedAt().toEpochSecond(ZoneOffset.UTC))
                 .signWith(key)
                 .compact();
     }
@@ -186,6 +191,31 @@ public class TokenProviderAdapter implements TokenProviderGateway {
                     .get("sid", String.class);
 
             return UUID.fromString(sessionId);
+
+        } catch (JwtException | IllegalArgumentException e){
+            throw new InvalidTokenException("Token inválido.");
+        }
+    }
+
+    @Override
+    public UserDTO extractUserClains(String token) {
+
+        try{
+            SecretKey key = getSigningKey();
+
+            Claims claims = Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+            return new UserDTO(
+                    claims.getSubject(),
+                    claims.get("username", String.class),
+                    claims.get("role", String.class),
+                    claims.get("timestamp", Long.class)
+            );
+
 
         } catch (JwtException | IllegalArgumentException e){
             throw new InvalidTokenException("Token inválido.");

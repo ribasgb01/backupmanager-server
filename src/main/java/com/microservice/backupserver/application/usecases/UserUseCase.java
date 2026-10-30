@@ -6,8 +6,10 @@ import com.microservice.backupserver.application.gateways.UserGateway;
 import com.microservice.backupserver.domain.User;
 import com.microservice.backupserver.domain.enums.UserRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -34,5 +36,16 @@ public class UserUseCase {
                 .build();
 
         return userGateway.save(user);
+    }
+
+    public void deleteUser(UUID id){
+
+        if(userGateway.deleteByIdReturningCount(id) == 0){
+            throw new UsernameNotFoundException("Usuário não encontrado.");
+        }
+    }
+
+    public List<User> getActiveUsers(){
+        return userGateway.getActiveUsers();
     }
 }

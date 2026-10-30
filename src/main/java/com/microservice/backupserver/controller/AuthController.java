@@ -1,10 +1,9 @@
 package com.microservice.backupserver.controller;
 
 import com.microservice.backupserver.application.usecases.AuthUseCase;
-import com.microservice.backupserver.application.usecases.dto.AuthenticationResponse;
+import com.microservice.backupserver.application.usecases.dto.AuthenticationDTO;
+import com.microservice.backupserver.application.usecases.dto.UserDTO;
 import com.microservice.backupserver.controller.dto.request.LoginRequest;
-import com.microservice.backupserver.controller.dto.response.LoginResponse;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -24,7 +23,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest){
 
-        AuthenticationResponse authResponse = authUseCase.authenticate(loginRequest.username(), loginRequest.password());
+        AuthenticationDTO authResponse = authUseCase.authenticate(loginRequest.username(), loginRequest.password());
 
         Duration accessTtl = Duration.between(Instant.now(), authResponse.accessExpiration());
         Duration refreshTtl = Duration.between(Instant.now(), authResponse.refreshExpiration());
@@ -62,7 +61,7 @@ public class AuthController {
             @CookieValue(name = "refreshToken", required = false)
             String refreshToken){
 
-        AuthenticationResponse authResponse = authUseCase.rotateRefreshToken(refreshToken);
+        AuthenticationDTO authResponse = authUseCase.rotateRefreshToken(refreshToken);
 
         Duration accessTtl = Duration.between(Instant.now(), authResponse.accessExpiration());
         Duration refreshTtl = Duration.between(Instant.now(), authResponse.refreshExpiration());
@@ -138,5 +137,15 @@ public class AuthController {
         return ResponseEntity.noContent()
                 .headers(headers)
                 .build();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getCurrentUser(
+            @CookieValue(name = "accessToken", required = false)
+            String accessToken
+    ){
+        UserDTO user = authUseCase.getCurrentUser(accessToken);
+        return ResponseEntity.ok(user);
+
     }
 }

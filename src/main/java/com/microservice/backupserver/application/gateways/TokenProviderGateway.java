@@ -1,5 +1,6 @@
 package com.microservice.backupserver.application.gateways;
 
+import com.microservice.backupserver.application.usecases.dto.UserDTO;
 import com.microservice.backupserver.domain.User;
 
 import java.time.Instant;
@@ -15,4 +16,5 @@ public interface TokenProviderGateway {
     String extractRole(String token);
     UUID extractUserId(String token);
     UUID extractSessionId(String token);
+    UserDTO extractUserClains(String token);
 }

@@ -5,8 +5,8 @@ import com.microservice.backupserver.application.exceptions.EntityNotFoundExcept
 import com.microservice.backupserver.application.gateways.BackupHistoryGateway;
 import com.microservice.backupserver.application.gateways.FileStorageGateway;
 import com.microservice.backupserver.application.gateways.MarketGateway;
-import com.microservice.backupserver.application.usecases.dto.BackupUploadResponse;
-import com.microservice.backupserver.application.usecases.dto.GetBackupResponse;
+import com.microservice.backupserver.application.usecases.dto.BackupUploadDTO;
+import com.microservice.backupserver.application.usecases.dto.GetBackupDTO;
 import com.microservice.backupserver.domain.BackupHistory;
 import com.microservice.backupserver.domain.Market;
 import com.microservice.backupserver.domain.enums.BackupStatus;
@@ -81,7 +81,7 @@ class BackupHistoryUseCaseTest {
         when(backupHistoryGateway.save(any(BackupHistory.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
 
-        BackupUploadResponse response = backupHistoryUseCase
+        BackupUploadDTO response = backupHistoryUseCase
                 .requestBackupUpload(market, "backup.fbk", 123L);
 
         assertNotNull(response.backupId());
@@ -332,7 +332,7 @@ class BackupHistoryUseCaseTest {
         when(backupHistoryGateway.findByPeriod(eq(id), any(LocalDateTime.class), any(LocalDateTime.class), eq(pageable)))
                 .thenReturn(page);
 
-        GetBackupResponse response = backupHistoryUseCase.getBackupHistory(id, start, end, pageable);
+        GetBackupDTO response = backupHistoryUseCase.getBackupHistory(id, start, end, pageable);
 
         assertSame(page, response.backupHistoryPage());
         assertEquals("Mercado", response.marketName());

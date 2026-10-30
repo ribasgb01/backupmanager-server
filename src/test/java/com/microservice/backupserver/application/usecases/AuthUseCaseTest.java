@@ -5,7 +5,7 @@ import com.microservice.backupserver.application.gateways.PasswordHasherGateway;
 import com.microservice.backupserver.application.gateways.TokenProviderGateway;
 import com.microservice.backupserver.application.gateways.TokenStateGateway;
 import com.microservice.backupserver.application.gateways.UserGateway;
-import com.microservice.backupserver.application.usecases.dto.AuthenticationResponse;
+import com.microservice.backupserver.application.usecases.dto.AuthenticationDTO;
 import com.microservice.backupserver.domain.User;
 import com.microservice.backupserver.domain.enums.UserRole;
 import org.junit.jupiter.api.DisplayName;
@@ -167,7 +167,7 @@ class AuthUseCaseTest {
         when(tokenProviderGateway.getExpiration(refreshToken))
                 .thenReturn(refreshTokenExpiration);
 
-        AuthenticationResponse response = authUseCase.authenticate(username, rawPassword);
+        AuthenticationDTO response = authUseCase.authenticate(username, rawPassword);
 
         verify(tokenStateGateway, times(1))
                 .saveRefreshToken(refreshToken, refreshTokenExpiration);
@@ -406,7 +406,7 @@ class AuthUseCaseTest {
         when(tokenProviderGateway.getExpiration("new-refresh"))
                 .thenReturn(refreshExpiration);
 
-        AuthenticationResponse response = authUseCase.rotateRefreshToken("old-refresh");
+        AuthenticationDTO response = authUseCase.rotateRefreshToken("old-refresh");
 
         assertEquals("new-access", response.accessToken());
         assertEquals(accessExpiration, response.accessExpiration());

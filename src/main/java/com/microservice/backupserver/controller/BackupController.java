@@ -1,7 +1,7 @@
 package com.microservice.backupserver.controller;
 
 import com.microservice.backupserver.application.usecases.BackupHistoryUseCase;
-import com.microservice.backupserver.application.usecases.dto.GetBackupResponse;
+import com.microservice.backupserver.application.usecases.dto.GetBackupDTO;
 import com.microservice.backupserver.controller.dto.request.CompleteBackupRequest;
 import com.microservice.backupserver.controller.dto.request.CreateUploadRequest;
 import com.microservice.backupserver.controller.dto.response.BackupHistoryResponse;
@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.yaml.snakeyaml.error.Mark;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -61,7 +60,7 @@ public class BackupController {
             Pageable pageable
     ){
 
-        GetBackupResponse useCaseResponse  = backupHistoryUseCase.getBackupHistory(marketId, startDate, endDate, pageable);
+        GetBackupDTO useCaseResponse  = backupHistoryUseCase.getBackupHistory(marketId, startDate, endDate, pageable);
 
         Page<BackupHistoryResponse> response = useCaseResponse.backupHistoryPage().map(
                 backupHistory -> new BackupHistoryResponse(
