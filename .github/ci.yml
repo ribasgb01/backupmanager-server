@@ -1,0 +1,42 @@
+name: Backup Manager - CI
+
+on:
+  push:
+    branches: [main]
+
+  pull_request:
+    branches: [main]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  server:
+    name: Server - Build and Tests
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backupmanager-server
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: |
+            backupmanager-server/pom.xml
+            backupmanager-server/.mvn/wrapper/maven-wrapper.properties
+
+      - name: Grant permission to Maven Wrapper
+        run: chmod +x mvnw
+
+      - name: Build and test
+        run: ./mvnw --batch-mode --no-transfer-progress clean verify
