@@ -110,6 +110,12 @@ public class AuthUseCase {
             throw new InvalidTokenException("Token inválido.");
         }
 
+        UUID sessionId = tokenProviderGateway.extractSessionId(accessToken);
+
+        if(tokenStateGateway.isSessionRevoked(sessionId)){
+            throw new SessionRevokedException("Sessão inválida.");
+        }
+
         return tokenProviderGateway.extractUserClains(accessToken);
     }
 }

@@ -1,10 +1,7 @@
 package com.microservice.backupserver.infrastructure.config;
 
 import com.microservice.backupserver.application.gateways.*;
-import com.microservice.backupserver.application.usecases.AuthUseCase;
-import com.microservice.backupserver.application.usecases.BackupHistoryUseCase;
-import com.microservice.backupserver.application.usecases.MarketUseCase;
-import com.microservice.backupserver.application.usecases.UserUseCase;
+import com.microservice.backupserver.application.usecases.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,6 +32,13 @@ public class UseCaseConfig {
         TokenStateGateway tokenStateGateway
     ){
         return new AuthUseCase(userGateway, hasherGateway, tokenProviderGateway, tokenStateGateway);
+    }
+
+    @Bean
+    public DashboardUseCase dashboardUseCase(
+            DashboardGateway dashboardGateway
+    ){
+        return new DashboardUseCase(dashboardGateway);
     }
 
     @Bean

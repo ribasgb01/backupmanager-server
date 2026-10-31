@@ -3,6 +3,7 @@ package com.microservice.backupserver.application.usecases;
 import com.microservice.backupserver.application.exceptions.EntityAlreadyExistsException;
 import com.microservice.backupserver.application.exceptions.EntityNotFoundException;
 import com.microservice.backupserver.application.gateways.MarketGateway;
+import com.microservice.backupserver.application.usecases.dto.MarketOverviewDTO;
 import com.microservice.backupserver.domain.Market;
 import lombok.RequiredArgsConstructor;
 
@@ -42,5 +43,9 @@ public class MarketUseCase {
     public Market getMarketById(UUID id){
         return marketGateway.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Este mercado não foi encontrado."));
+    }
+
+    public List<MarketOverviewDTO> findAllWithOverview(){
+        return marketGateway.findAllWithOverview();
     }
 }

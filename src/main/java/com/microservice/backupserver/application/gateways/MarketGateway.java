@@ -1,5 +1,6 @@
 package com.microservice.backupserver.application.gateways;
 
+import com.microservice.backupserver.application.usecases.dto.MarketOverviewDTO;
 import com.microservice.backupserver.domain.Market;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface MarketGateway {
     List<Market> findAllActive();
     Optional<Market> findByApiKey(String apiKey);
     boolean existsByCnpj(String cnpj);
+    List<MarketOverviewDTO> findAllWithOverview();
 }

@@ -1,11 +1,11 @@
 package com.microservice.backupserver.controller.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
 public record DeleteUserRequest (
 
-        @NotBlank(message = "ID do usuário é obrigatório.")
+        @NotNull(message = "ID do usuário é obrigatório.")
         UUID userId
 ){}

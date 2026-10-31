@@ -4,6 +4,7 @@ import com.microservice.backupserver.application.gateways.UserGateway;
 import com.microservice.backupserver.domain.User;
 import com.microservice.backupserver.infrastructure.persistence.UserRepository;
 import com.microservice.backupserver.infrastructure.persistence.mappers.UserMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -46,6 +47,7 @@ public class UserRepositoryAdapter implements UserGateway {
     }
 
     @Override
+    @Transactional
     public int deleteByIdReturningCount(UUID id) {
         return userRepository.deleteByIdReturningCount(id);
     }
@@ -55,6 +57,4 @@ public class UserRepositoryAdapter implements UserGateway {
         return userRepository.findByActiveTrue()
                 .stream().map(userMapper::toDomain).toList();
     }
-
-
 }

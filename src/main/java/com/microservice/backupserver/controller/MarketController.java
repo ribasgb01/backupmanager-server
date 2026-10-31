@@ -1,6 +1,7 @@
 package com.microservice.backupserver.controller;
 
 import com.microservice.backupserver.application.usecases.MarketUseCase;
+import com.microservice.backupserver.application.usecases.dto.MarketOverviewDTO;
 import com.microservice.backupserver.controller.dto.request.CreateMarketRequest;
 import com.microservice.backupserver.controller.dto.response.MarketResponse;
 import com.microservice.backupserver.domain.Market;
@@ -57,6 +58,14 @@ public class MarketController {
                 )).toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/overview")
+    public ResponseEntity<List<MarketOverviewDTO>> listMarketsWithOverview(){
+
+        List<MarketOverviewDTO> marketList = marketUseCase.findAllWithOverview();
+
+        return ResponseEntity.status(HttpStatus.OK).body(marketList);
     }
 
     @GetMapping("/{id}")
